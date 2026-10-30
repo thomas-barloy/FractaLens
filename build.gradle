@@ -1,0 +1,59 @@
+/*
+ * Gradle's configuration to compile and run the project.
+ */
+
+// The plugins allowing Gradle to manage the project as a Java application.
+plugins {
+    id 'application'
+    id 'jacoco'
+    id 'java'
+    id 'org.sonarqube' version '7.5.0.8588'
+}
+
+// The version of Java used in the project.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+application {
+    mainClass = 'fr.univartois.butinfo.fractalens.FractalCli'
+}
+
+// The repositories from which dependencies should be downloaded.
+repositories {
+    mavenCentral()
+}
+
+// The dependencies of the project.
+dependencies {
+    implementation 'com.madgag:animated-gif-lib:1.4'
+    implementation 'info.picocli:picocli:4.7.6'
+
+    // Dependencies for unit tests.
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// The configuration of JUnit Jupiter for unit tests.
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+
+    // Ensure that the JaCoCo report is generated after tests are run.
+    finalizedBy jacocoTestReport
+}
+
+// The configuration of JaCoCo for code coverage reporting.
+jacoco {
+    toolVersion = '0.8.15'
+}
+
+// The configuration of the SonarQube static analysis.
+sonar {
+    properties {
+        property("sonar.host.url", "https://sonarqube.univ-artois.fr")
+        property("sonar.projectKey", "fractalens_dream_team")
+    }
+}
